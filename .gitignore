@@ -1,0 +1,27 @@
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+ehthumbs.db
+Thumbs.db
+
+# IDE
+.vscode/
+.idea*
+
+# Environment
+.env
+.env.local
+.env.*
+
+# Logs
+*.log
+
+# Temp files
+temp/
+tmp/
+*.temp
+*.backup
+
+# Docs build output
+docs/_build/
