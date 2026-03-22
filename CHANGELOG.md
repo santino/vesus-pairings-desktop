@@ -1,3 +1,13 @@
+## 0.1.0-alpha.3 (2026-03-22)
+
+### 🩹 Fixes
+
+- **@vesus/pairings-api:** Fix communication between Desktop and Cloud due to environment variable setup
+
+### 🧱 Updated Dependencies
+
+- Updated pairings-api to 0.1.0-alpha.3
+
 ## 0.1.0-alpha.2 (2026-03-18)
 
 ### 🚀 Features
