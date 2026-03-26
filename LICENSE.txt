@@ -1,9 +1,9 @@
 ================================================================================
                       END USER LICENSE AGREEMENT (EULA)
-                           Vesus Pairings Desktop
+                      Vesus Pairings (Desktop Edition)
                      Copyright (c) 2026 Santino Puleio
                         https://vesus.org/pairings
-                      Version 0.1.0-alpha.3 - 2026-03-22
+                      Version 0.1.0-alpha.4 - 2026-03-26
                              All Rights Reserved
 ================================================================================
 
@@ -268,6 +268,6 @@ For questions regarding this Agreement or the Software:
   Website:  https://vesus.org
 
 ================================================================================
-      Unauthorised reproduction or distribution is strictly prohibited.
-      Direct others to https://vesus.org/pairings for the official download.
+     Unauthorised reproduction or distribution is strictly prohibited.
+     Direct others to https://vesus.org/pairings for the official download.
 ================================================================================
