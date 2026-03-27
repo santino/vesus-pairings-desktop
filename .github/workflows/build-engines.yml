@@ -99,15 +99,32 @@ jobs:
         if: steps.check-platform.outputs.should_build == 'true'
         uses: actions/checkout@v4
 
-      - name: Setup Python
-        if: steps.check-platform.outputs.should_build == 'true'
+      - name: Setup Python (macOS/Windows)
+        if: steps.check-platform.outputs.should_build == 'true' && !startsWith(matrix.platform, 'linux')
         uses: actions/setup-python@v5
         with:
           python-version: '3.14'
           architecture: ${{ matrix.arch }}
 
-      - name: Build Gacrux binaries
-        if: steps.check-platform.outputs.should_build == 'true'
+      - name: Build in container (Linux)
+        if: steps.check-platform.outputs.should_build == 'true' && startsWith(matrix.platform, 'linux')
+        uses: addnab/docker-run-action@v3
+        with:
+          image: python:3.12-bullseye
+          options: -v ${{ github.workspace }}:/github/workspace
+          shell: bash
+          run: |
+            set -euo pipefail
+
+            apt-get update -qq
+            apt-get install -y -qq git binutils
+
+            cd /github/workspace
+            chmod +x scripts/build-gacrux.sh
+            ./scripts/build-gacrux.sh --output-dir ./engines
+
+      - name: Build Gacrux binaries (macOS/Windows)
+        if: steps.check-platform.outputs.should_build == 'true' && !startsWith(matrix.platform, 'linux')
         shell: bash
         env:
           PLATFORM: ${{ matrix.platform }}

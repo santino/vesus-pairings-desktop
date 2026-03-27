@@ -91,8 +91,6 @@ Each release includes SHA256 checksums for the executables. To verify the integr
 - **Quick Start Guide**: [PDF Download](https://vesus.org/assets/documents/VesusPairings-QSG_en-GB.pdf)
 - **Full User Manual**: [PDF Download](https://vesus.org/assets/documents/VesusPairings-UserManual_en-GB.pdf)
 
-Here is the updated paragraph, adjusted to guide users via the release title:
-
 ### Gacrux Engine
 
 Vesus Pairings integrates the [Gacrux](https://github.com/OttoMilvang/TieBreakServer) engine for **Swiss Dutch** pairings. Gacrux is developed by IA Otto Milvang, a member of the FIDE Technical Commission.
