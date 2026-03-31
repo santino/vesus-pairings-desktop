@@ -1,3 +1,11 @@
+## 0.1.0-alpha.5 (2026-03-31)
+
+### 🩹 Fixes
+
+- Improve file opening on Windows
+- Improve cross-platform printing and sanitize JS injection points
+- Persist update info to localStorage to support refreshes
+
 ## 0.1.0-alpha.4 (2026-03-26)
 
 ### 🚀 Features
