@@ -59,22 +59,26 @@ Distributed here, the desktop edition is optimized for environments where contro
 - **RAM**: ~300 MB (additional memory may be needed depending on system resources and workload)
 - **Disk Space**: 160 MB minimum, plus additional space for user data (events and rating lists)
 
-### Installation
+## Installation
 
-For detailed installation instructions, troubleshooting, and platform-specific notes, see the [docs/](./docs) directory.
+> **Note:** Since the application is not digitally signed, your browser may warn you that the downloaded file is unsafe or from an unknown developer. You can safely discard this warning and choose to keep the file.
 
 **Quick Start:**
 
 #### Windows
-1. Download the executable.
-2. Run the executable. If you see a warning about an unrecognized app, click "More info" and then "Run anyway".
+1. Available as an EXE installer (x64). Also compatible with ARM64 devices.
+2. Download and run the executable. If you see a warning about an unrecognized app, click "More info" and then "Run anyway".
+3. For detailed instructions, see the [Windows installation guide](./docs/windows/installation.md).
 
 #### Linux
-Available as `.deb` package (Debian, Ubuntu, etc.) or `.rpm` package (Fedora, RHEL, etc.).
+1. Available as `.deb` package (Debian, Ubuntu, etc.) or `.rpm` package (Fedora, RHEL, etc.), each in x64 and arm64 variants.
+2. In most cases, simply double-click the downloaded package and click "Install" in your system's default package manager.
+3. For detailed instructions, see the [Linux installation guide](./docs/linux/installation.md).
 
 #### macOS
 1. Download the DMG appropriate for your architecture (Intel x64 or Apple Silicon arm64).
-2. Open the downloaded file. If you see a warning that the app cannot be opened because it is from an unidentified developer, go to System Preferences > Security & Privacy and click "Open Anyway".
+2. Open the downloaded file. If you see a warning that the app cannot be opened because it is from an unidentified developer, go to System Settings > Privacy & Security and click "Open Anyway".
+3. For detailed instructions, see the [macOS installation guide](./docs/macos/installation.md).
 
 ## Verifying Checksums
 

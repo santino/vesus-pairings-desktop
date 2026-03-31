@@ -73,6 +73,11 @@ If you see a warning that the app is damaged and should be moved to the Trash:
    - Go to System Settings > Privacy & Security > General
    - Under "Security", look for the option to allow the application
    - Try opening the app again
+4. If the app does not appear in System Settings > Privacy & Security, run the following command in Terminal to remove the quarantine attribute and relaunch the app:
+   ```bash
+   xattr -cr /Applications/Vesus\ Pairings.app && open /Applications/Vesus\ Pairings.app
+   ```
+   > Adjust the path if you installed the application in a different location.
 
 ### Permission Issues
 

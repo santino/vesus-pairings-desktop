@@ -5,6 +5,11 @@
 - Improve file opening on Windows
 - Improve cross-platform printing and sanitize JS injection points
 - Persist update info to localStorage to support refreshes
+- Detect locally deleted registrations and preserve local player changes
+- Allow importing from Cloud also when using /pairings/ links
+- Preserve unchanged boards when manually reordering pairings
+- Ensure autosave always persists players and their settings
+- Embed fonts required for PDF prints
 
 ## 0.1.0-alpha.4 (2026-03-26)
 
