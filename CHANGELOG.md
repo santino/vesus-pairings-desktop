@@ -1,3 +1,15 @@
+## 0.1.0-alpha.6 (2026-04-10)
+
+### 🚀 Features
+
+- Change Desktop - Cloud communication protocol via authentication and public tournament codes
+- Implement Desktop authentication via Cloud account
+
+### 🩹 Fixes
+
+- Improve cloud sync reliability, error handling and published state management
+- Add device info collection and better validation for desktop authentication, plus cosmetic fixes
+
 ## 0.1.0-alpha.5 (2026-03-31)
 
 ### 🩹 Fixes
@@ -5,11 +17,6 @@
 - Improve file opening on Windows
 - Improve cross-platform printing and sanitize JS injection points
 - Persist update info to localStorage to support refreshes
-- Detect locally deleted registrations and preserve local player changes
-- Allow importing from Cloud also when using /pairings/ links
-- Preserve unchanged boards when manually reordering pairings
-- Ensure autosave always persists players and their settings
-- Embed fonts required for PDF prints
 
 ## 0.1.0-alpha.4 (2026-03-26)
 
