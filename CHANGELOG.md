@@ -1,3 +1,11 @@
+## 0.1.0-alpha.7 (2026-04-15)
+
+### 🩹 Fixes
+
+- Minor fixes, ChessResults publishing encoding and standing PDF credits
+- Fix print buttons on linux
+- Fix SSO authentication claim fallback
+
 ## 0.1.0-alpha.6 (2026-04-10)
 
 ### 🚀 Features

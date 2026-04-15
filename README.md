@@ -16,13 +16,13 @@ Always download the latest release from the [Releases page](https://github.com/s
 
 | Platform | Architecture | Package | Download |
 |----------|--------------|---------|----------|
-| 🪟 Windows | x64 | EXE | [Download](https://github.com/santino/vesus-pairings-desktop/releases/download/v0.1.0-alpha.6/vesus-pairings_windows_v0.1.0-alpha.6_x64_setup.exe) |
-| 🍎 macOS | arm64 | DMG | [Download](https://github.com/santino/vesus-pairings-desktop/releases/download/v0.1.0-alpha.6/vesus-pairings_macOS_v0.1.0-alpha.6_arm64.dmg) |
-| 🍎 macOS | x64 | DMG | [Download](https://github.com/santino/vesus-pairings-desktop/releases/download/v0.1.0-alpha.6/vesus-pairings_macOS_v0.1.0-alpha.6_x64.dmg) |
-| 🐧 Linux | x64 | DEB | [Download](https://github.com/santino/vesus-pairings-desktop/releases/download/v0.1.0-alpha.6/vesus-pairings_linux_v0.1.0-alpha.6_x64.deb) |
-| 🐧 Linux | arm64 | DEB | [Download](https://github.com/santino/vesus-pairings-desktop/releases/download/v0.1.0-alpha.6/vesus-pairings_linux_v0.1.0-alpha.6_arm64.deb) |
-| 🐧 Linux | x64 | RPM | [Download](https://github.com/santino/vesus-pairings-desktop/releases/download/v0.1.0-alpha.6/vesus-pairings_linux_v0.1.0-alpha.6_x64.rpm) |
-| 🐧 Linux | arm64 | RPM | [Download](https://github.com/santino/vesus-pairings-desktop/releases/download/v0.1.0-alpha.6/vesus-pairings_linux_v0.1.0-alpha.6_arm64.rpm) |
+| 🪟 Windows | x64 | EXE | [Download](https://github.com/santino/vesus-pairings-desktop/releases/download/v0.1.0-alpha.7/vesus-pairings_windows_v0.1.0-alpha.7_x64_setup.exe) |
+| 🍎 macOS | arm64 | DMG | [Download](https://github.com/santino/vesus-pairings-desktop/releases/download/v0.1.0-alpha.7/vesus-pairings_macOS_v0.1.0-alpha.7_arm64.dmg) |
+| 🍎 macOS | x64 | DMG | [Download](https://github.com/santino/vesus-pairings-desktop/releases/download/v0.1.0-alpha.7/vesus-pairings_macOS_v0.1.0-alpha.7_x64.dmg) |
+| 🐧 Linux | x64 | DEB | [Download](https://github.com/santino/vesus-pairings-desktop/releases/download/v0.1.0-alpha.7/vesus-pairings_linux_v0.1.0-alpha.7_x64.deb) |
+| 🐧 Linux | arm64 | DEB | [Download](https://github.com/santino/vesus-pairings-desktop/releases/download/v0.1.0-alpha.7/vesus-pairings_linux_v0.1.0-alpha.7_arm64.deb) |
+| 🐧 Linux | x64 | RPM | [Download](https://github.com/santino/vesus-pairings-desktop/releases/download/v0.1.0-alpha.7/vesus-pairings_linux_v0.1.0-alpha.7_x64.rpm) |
+| 🐧 Linux | arm64 | RPM | [Download](https://github.com/santino/vesus-pairings-desktop/releases/download/v0.1.0-alpha.7/vesus-pairings_linux_v0.1.0-alpha.7_arm64.rpm) |
 
 ## Two Editions, One Platform
 

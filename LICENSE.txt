@@ -3,7 +3,7 @@
                       Vesus Pairings (Desktop Edition)
                      Copyright (c) 2026 Santino Puleio
                         https://vesus.org/pairings
-                      Version 0.1.0-alpha.6 - 2026-04-10
+                      Version 0.1.0-alpha.7 - 2026-04-15
                              All Rights Reserved
 ================================================================================
 
