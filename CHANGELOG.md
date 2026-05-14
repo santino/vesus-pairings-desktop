@@ -1,3 +1,28 @@
+## 0.1.0-beta.1 (2026-05-14)
+
+### 🚀 Features
+
+- Introduce automatic backups in Vesus Pairings Desktop application
+- Work with integrated rating lists in Vesus Pairings Desktop application
+- Change Desktop - Cloud communication protocol via authentication and public tournament codes
+- Implement Desktop authentication via Cloud account
+- Introduce Update notification and assisted download
+- Support CPUs from before 2013 that don’t support AVX2 instructions optimisations
+- introduce compatibility with new Vesus Pairings Desktop application
+
+### 🩹 Fixes
+
+- Minor fixes, ChessResults publishing encoding and standing PDF credits
+- Fix print buttons on linux
+- Fix SSO authentication claim fallback
+- Improve cloud sync reliability, error handling and published state management
+- Add device info collection and better validation for desktop authentication, plus cosmetic fixes
+- Improve file opening on Windows
+- Improve cross-platform printing and sanitize JS injection points
+- Persist update info to localStorage to support refreshes
+- Improve reliability across restarts and persistent logging
+- Fix communication between Desktop and Cloud due to environment variable setup
+
 ## 0.1.0-alpha.9 (2026-05-10)
 
 ### 🚀 Features
