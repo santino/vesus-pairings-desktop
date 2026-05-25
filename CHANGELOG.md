@@ -1,9 +1,29 @@
+## 0.1.0-beta.2 (2026-05-25)
+
+### 🚀 Features
+
+- real-time updates now work correctly on Ubuntu 26.04 Wayland / Kernel 7
+- Sync additional tournament and event data between Desktop and Cloud
+- Improve tab labels: Add count to Participants and round indicators to Pairings
+- Implement new Desktop -> Cloud Sync registrations flow from scratch
+- Implement new registrations sync protocol between Desktop and Cloud
+- Implement table sticky headers and top scrollbar
+- Add loader indicator whilst retrieving data on application launch
+- Launch application in maximised window
+
+### 🩹 Fixes
+
+- Ensure Desktop application can change tournament Details at any time
+- Improve Tournament Schedule to print localised date / time
+- Ensure absences are persisted when syncing from Vesus Pairings Cloud to Desktop
+
 ## 0.1.0-beta.1 (2026-05-14)
 
 ### 🚀 Features
 
 - Introduce automatic backups in Vesus Pairings Desktop application
 - Work with integrated rating lists in Vesus Pairings Desktop application
+- Implement schedule Print
 - Change Desktop - Cloud communication protocol via authentication and public tournament codes
 - Implement Desktop authentication via Cloud account
 - Introduce Update notification and assisted download
@@ -12,6 +32,8 @@
 
 ### 🩹 Fixes
 
+- Improve detection of results source on results clear
+- Styling fixes for Import from cloud dialog + logic fixes for First publish
 - Minor fixes, ChessResults publishing encoding and standing PDF credits
 - Fix print buttons on linux
 - Fix SSO authentication claim fallback
@@ -28,6 +50,12 @@
 ### 🚀 Features
 
 - Work with integrated rating lists in Vesus Pairings Desktop application
+- Implement schedule Print
+
+### 🩹 Fixes
+
+- Improve detection of results source on results clear
+- Styling fixes for Import from cloud dialog + logic fixes for First publish
 
 ## 0.1.0-alpha.8 (2026-05-01)
 
