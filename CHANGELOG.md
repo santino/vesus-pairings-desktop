@@ -1,3 +1,12 @@
+## 0.1.0-beta.3 (2026-06-05)
+
+### 🚀 Features
+- Make tables sticky headers interactable
+- Add detailed report after sync operations
+- Implement granular diff-based strategy when syncing registrations in Vesus Pairings Desktop
+- Introduce bi-directional Sync to allow collaboration across multiple users and applications (Cloud, Desktop)
+- Introduce Schedule to the Vesus Pairings Prints tab
+
 ## 0.1.0-beta.2 (2026-05-25)
 
 ### 🚀 Features
@@ -58,6 +67,19 @@
 - Styling fixes for Import from cloud dialog + logic fixes for First publish
 
 ## 0.1.0-alpha.8 (2026-05-01)
+
+### 🚀 Features
+
+- Implement first publish for events from Desktop to Cloud
+- Remove references to deprecated tieBreakDummy2026 setting
+- Add new page to create events in Vesus Pairings Desktop application
+- Update Gacrux to v1.7.50
+- Add copy to clipboard button to tournament code
+
+### 🩹 Fixes
+
+- Fix timezone conversion when formatting dates
+- Fix logic to determine available data when building columns for PDF export
 
 ## 0.1.0-alpha.7 (2026-04-15)
 
