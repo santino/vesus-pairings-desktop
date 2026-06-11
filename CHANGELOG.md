@@ -1,3 +1,16 @@
+## 0.1.0 (2026-06-10)
+
+### 🚀 Features
+
+- Introduce participants bulk delete and bulk move (between event tournaments) in Vesus Pairings
+
+### 🩹 Fixes
+
+- Better styling for TieBreaks category headings
+- Ensure Vesus Pairings Desktop edition shows instructions when searching from database and no rating lists are available
+- Fix tournament type field (individual/team) is locked to Individual in Vesus Pairings
+- Fix Export PGN Dialog to reset when switching from Multi to Single tournament export
+
 ## 0.1.0-beta.3 (2026-06-05)
 
 ### 🚀 Features
