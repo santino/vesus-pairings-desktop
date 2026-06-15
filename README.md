@@ -16,13 +16,13 @@ Always download the latest release from the [Releases page](https://github.com/s
 
 | Platform | Architecture | Package | Download |
 |----------|--------------|---------|----------|
-| 🪟 Windows | x64 | EXE | [Download](https://github.com/santino/vesus-pairings-desktop/releases/download/v0.1.0/vesus-pairings_windows_v0.1.0_x64_setup.exe) |
-| 🍎 macOS | arm64 | DMG | [Download](https://github.com/santino/vesus-pairings-desktop/releases/download/v0.1.0/vesus-pairings_macOS_v0.1.0_arm64.dmg) |
-| 🍎 macOS | x64 | DMG | [Download](https://github.com/santino/vesus-pairings-desktop/releases/download/v0.1.0/vesus-pairings_macOS_v0.1.0_x64.dmg) |
-| 🐧 Linux | x64 | DEB | [Download](https://github.com/santino/vesus-pairings-desktop/releases/download/v0.1.0/vesus-pairings_linux_v0.1.0_x64.deb) |
-| 🐧 Linux | arm64 | DEB | [Download](https://github.com/santino/vesus-pairings-desktop/releases/download/v0.1.0/vesus-pairings_linux_v0.1.0_arm64.deb) |
-| 🐧 Linux | x64 | RPM | [Download](https://github.com/santino/vesus-pairings-desktop/releases/download/v0.1.0/vesus-pairings_linux_v0.1.0_x64.rpm) |
-| 🐧 Linux | arm64 | RPM | [Download](https://github.com/santino/vesus-pairings-desktop/releases/download/v0.1.0/vesus-pairings_linux_v0.1.0_arm64.rpm) |
+| 🪟 Windows | x64 | EXE | [Download](https://github.com/santino/vesus-pairings-desktop/releases/download/v0.2.0/vesus-pairings_windows_v0.2.0_x64_setup.exe) |
+| 🍎 macOS | arm64 | DMG | [Download](https://github.com/santino/vesus-pairings-desktop/releases/download/v0.2.0/vesus-pairings_macOS_v0.2.0_arm64.dmg) |
+| 🍎 macOS | x64 | DMG | [Download](https://github.com/santino/vesus-pairings-desktop/releases/download/v0.2.0/vesus-pairings_macOS_v0.2.0_x64.dmg) |
+| 🐧 Linux | x64 | DEB | [Download](https://github.com/santino/vesus-pairings-desktop/releases/download/v0.2.0/vesus-pairings_linux_v0.2.0_x64.deb) |
+| 🐧 Linux | arm64 | DEB | [Download](https://github.com/santino/vesus-pairings-desktop/releases/download/v0.2.0/vesus-pairings_linux_v0.2.0_arm64.deb) |
+| 🐧 Linux | x64 | RPM | [Download](https://github.com/santino/vesus-pairings-desktop/releases/download/v0.2.0/vesus-pairings_linux_v0.2.0_x64.rpm) |
+| 🐧 Linux | arm64 | RPM | [Download](https://github.com/santino/vesus-pairings-desktop/releases/download/v0.2.0/vesus-pairings_linux_v0.2.0_arm64.rpm) |
 
 ## Two Editions, One Platform
 
@@ -56,7 +56,7 @@ Distributed here, the desktop edition is optimized for environments where contro
 
 - **Operating System**: Windows 10, Linux (any recent distribution), or macOS 10.15+
 - **Processor**: 64-bit processor (x86_64 or ARM)
-- **RAM**: ~300 MB (additional memory may be needed depending on system resources and workload)
+- **RAM**: ~400 MB (additional memory may be needed depending on system resources and workload)
 - **Disk Space**: 160 MB minimum, plus additional space for user data (events and rating lists)
 
 ## Installation

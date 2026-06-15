@@ -1,3 +1,23 @@
+## 0.2.0 (2026-06-15)
+
+### 🚀 Features
+
+- Open the text report following "Update rating list data" task
+- Implement new Fide Event Id field (with link)
+- Always show Save and Cancel action buttons in Pairings Manual Edit, when screen is large enough
+
+### 🩹 Fixes
+
+- Set absences immediately when entering late joiners
+- Improve data preparation for bi-directional sync
+- Make sure to scroll to top of the tab when switching from list to manual edit in Pairings Tab
+- Fix Tables to reset ancestor sticky reference when different tables might be rendered under the same tab conditionally
+- Fix table top scrollbar z-index position to not override Dropdowns and Dialogs
+- Persist tables horizontal scroll position when scrolling up to a position that doesn't require sticky header
+- Improve logic to disable participants insert buttons
+- Fix Syncronisation success message
+- Fix updated boards (plural) usage in sync report
+
 ## 0.1.0 (2026-06-10)
 
 ### 🚀 Features
