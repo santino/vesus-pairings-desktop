@@ -1,3 +1,33 @@
+## 0.3.0 (2026-06-24)
+
+### 🚀 Features
+
+- Open event and backup files from the Desktop application
+- Introduce granular SYNC report. Also translate report for Update rating list data
+- Introducing diff checks in backups to ensure only fresh backups are stored
+- Trim player names when printing TXT pairings to fit A4 and improving direct (non PDF) prints
+- Add days left count, in addition to expiry date, to Account connection dropdown
+- Vesus Pairings Desktop to open the text report following Update rating list data task
+
+### 🩹 Fixes
+
+- Remove option /P from DE tiebreak on RoundRobin tournaments (since it is always the default behaviour)
+- Fix Chess960 position print in Vesus Pairings Desktop application
+- Fix logic to set default tournament registrations `start` and `end` dates
+- Add protection to Desktop - Cloud SYNC to prevent orphaned pairings
+- Better handling of Round Robin Single/Double detection when importing from TRF
+- Refactor PDFs to ensure consistent rows handling across pages and better headers and footers
+- Strengthen players handling logic for Desktop - Cloud SYNC
+- Use semicolons to separate list of players in Sync reports (as comma is already used between Surname and Name)
+- Improve logic to add technical configuration to TRF even before the tournament starts
+- Fix FSI_ITA TORO report when multiple arbiters on multiple lines are declared
+- Fix board cards print
+- Ensure update banner does not re-show if it was dismissed with "remind later"
+- Fix computing time control with multiple periods when publishing to ChessResults
+- Fix PDF exports to always include the correct link to public event (also for Desktop edition)
+- Refactor backups auto cleanup on application startup to share consistent logic with backup creation cleanup rules
+- Replace cached application version with freshly computed version number on application launch
+
 ## 0.2.0 (2026-06-15)
 
 ### 🚀 Features
