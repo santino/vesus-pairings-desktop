@@ -1,3 +1,10 @@
+## 0.3.1 (2026-06-28)
+
+### 🩹 Fixes
+
+- Fix config for Desktop -> Cloud communication, following Cloud architecture refactoring
+- Consolidate usage of console tasks on Windows
+
 ## 0.3.0 (2026-06-24)
 
 ### 🚀 Features
