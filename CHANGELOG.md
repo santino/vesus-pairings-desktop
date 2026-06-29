@@ -1,3 +1,12 @@
+## 0.3.2 (2026-06-29)
+
+### 🩹 Fixes
+
+- Improve players search from rating lists, including normalisation of casing, accents and punctuation
+- Fix advanced tournaments search patterns including date ranges
+- Fix bulk import from CSV matching for Fide and National rated players
+- Reset persisting version update information after this has been installed
+
 ## 0.3.1 (2026-06-28)
 
 ### 🩹 Fixes
