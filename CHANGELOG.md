@@ -1,3 +1,15 @@
+## 0.4.0 (2026-07-07)
+
+### 🚀 Features
+
+- Introduce Event Broadcast to allow self check-in and results entry by players and/or collaborators over the same network, even in absence of internet connection
+- Introduce controls to track participants' presence in Vesus Pairings
+
+### 🩹 Fixes
+
+- Fix event append tournament to skip fields that should not be cloned from reference tournament
+- Fix import from CSV default values for numeric fields (Fide/National Rating and K)
+
 ## 0.3.2 (2026-06-29)
 
 ### 🩹 Fixes
