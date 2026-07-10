@@ -97,31 +97,34 @@ jobs:
 
       - name: Checkout repository
         if: steps.check-platform.outputs.should_build == 'true'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Python (macOS/Windows)
         if: steps.check-platform.outputs.should_build == 'true' && !startsWith(matrix.platform, 'linux')
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: '3.14'
           architecture: ${{ matrix.arch }}
 
       - name: Build in container (Linux)
         if: steps.check-platform.outputs.should_build == 'true' && startsWith(matrix.platform, 'linux')
-        uses: addnab/docker-run-action@v3
-        with:
-          image: python:3.12-bullseye
-          options: -v ${{ github.workspace }}:/github/workspace
-          shell: bash
-          run: |
-            set -euo pipefail
+        shell: bash
+        run: |
+          set -euo pipefail
 
-            apt-get update -qq
-            apt-get install -y -qq git binutils
+          docker run --rm \
+            -v "${{ github.workspace }}:/github/workspace" \
+            -w /github/workspace \
+            python:3.12-bullseye \
+            bash -c '
+              set -euo pipefail
 
-            cd /github/workspace
-            chmod +x scripts/build-gacrux.sh
-            ./scripts/build-gacrux.sh --output-dir ./engines
+              apt-get update -qq
+              apt-get install -y -qq git binutils
+
+              chmod +x scripts/build-gacrux.sh
+              ./scripts/build-gacrux.sh --output-dir ./engines
+            '
 
       - name: Build Gacrux binaries (macOS/Windows)
         if: steps.check-platform.outputs.should_build == 'true' && !startsWith(matrix.platform, 'linux')
@@ -134,11 +137,13 @@ jobs:
 
       - name: Upload binary artifacts
         if: steps.check-platform.outputs.should_build == 'true'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: ${{ matrix.platform }}-engines
           path: |
-            ./engines/*
+            ./engines/*.tar.gz
+            ./engines/*.zip
+            ./engines/checksums-*.txt
             ./engines/version-*.txt
           retention-days: 30
 
@@ -152,10 +157,10 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Download all artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           path: ./artifacts
 
@@ -208,7 +213,7 @@ jobs:
           cat checksums.txt
 
       - name: Create Release
-        uses: softprops/action-gh-release@v2.6.1
+        uses: softprops/action-gh-release@v3.0.1
         with:
           tag_name: gacrux-v${{ steps.version.outputs.version }}
           name: Gacrux Engines v${{ steps.version.outputs.version }}
@@ -220,12 +225,17 @@ jobs:
             Gacrux version: **${{ steps.version.outputs.version }}**
             
             ## Binaries
-            
+
+            Each engine is distributed as a platform-native archive containing the executable and its `_internal` dependencies. Extract the archive before running:
+            - Windows: `.zip` (extract with File Explorer or `Expand-Archive`)
+            - macOS / Linux: `.tar.gz` (extract with `tar -xzf`)
+
             This release includes the following binaries for each platform:
             - **pairingchecker** - Pairing checker engine
             - **tournamentgenerator** - Tournament generator engine
             - **tiebreakchecker** - Tiebreak checker engine
-            
+            - **ratingsimulation** - Rating simulation engine
+
             Available for: Linux (x64, arm64), macOS (x64, arm64), Windows (x64, arm64)
             
             ## Platforms
@@ -246,9 +256,8 @@ jobs:
           files: |
             version.txt
             checksums.txt
-            artifacts/**/pairingchecker-*
-            artifacts/**/tournamentgenerator-*
-            artifacts/**/tiebreakchecker-*
+            artifacts/**/*.tar.gz
+            artifacts/**/*.zip
           fail_on_unmatched_files: false
 
       - name: Generate release summary
@@ -260,14 +269,16 @@ jobs:
           echo "- \`${{ steps.version.outputs.version }}\`" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### Binaries" >> $GITHUB_STEP_SUMMARY
-          echo "| Platform | Binaries |" >> $GITHUB_STEP_SUMMARY
+          echo "Each engine ships as a platform-native archive (\`.tar.gz\` on macOS/Linux, \`.zip\` on Windows) containing the executable and its \`_internal\` folder." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Platform | Archives |" >> $GITHUB_STEP_SUMMARY
           echo "|----------|----------|" >> $GITHUB_STEP_SUMMARY
-          echo "| macOS ARM64 | pairingchecker-macos-arm64, tournamentgenerator-macos-arm64, tiebreakchecker-macos-arm64 |" >> $GITHUB_STEP_SUMMARY
-          echo "| macOS x64 | pairingchecker-macos-x64, tournamentgenerator-macos-x64, tiebreakchecker-macos-x64 |" >> $GITHUB_STEP_SUMMARY
-          echo "| Linux ARM64 | pairingchecker-linux-arm64, tournamentgenerator-linux-arm64, tiebreakchecker-linux-arm64 |" >> $GITHUB_STEP_SUMMARY
-          echo "| Linux x64 | pairingchecker-linux-x64, tournamentgenerator-linux-x64, tiebreakchecker-linux-x64 |" >> $GITHUB_STEP_SUMMARY
-          echo "| Windows ARM64 | pairingchecker-windows-arm64.exe, tournamentgenerator-windows-arm64.exe, tiebreakchecker-windows-arm64.exe |" >> $GITHUB_STEP_SUMMARY
-          echo "| Windows x64 | pairingchecker-windows-x64.exe, tournamentgenerator-windows-x64.exe, tiebreakchecker-windows-x64.exe |" >> $GITHUB_STEP_SUMMARY
+          echo "| macOS ARM64 | pairingchecker-macos-arm64.tar.gz, tournamentgenerator-macos-arm64.tar.gz, tiebreakchecker-macos-arm64.tar.gz, ratingsimulation-macos-arm64.tar.gz |" >> $GITHUB_STEP_SUMMARY
+          echo "| macOS x64 | pairingchecker-macos-x64.tar.gz, tournamentgenerator-macos-x64.tar.gz, tiebreakchecker-macos-x64.tar.gz, ratingsimulation-macos-x64.tar.gz |" >> $GITHUB_STEP_SUMMARY
+          echo "| Linux ARM64 | pairingchecker-linux-arm64.tar.gz, tournamentgenerator-linux-arm64.tar.gz, tiebreakchecker-linux-arm64.tar.gz, ratingsimulation-linux-arm64.tar.gz |" >> $GITHUB_STEP_SUMMARY
+          echo "| Linux x64 | pairingchecker-linux-x64.tar.gz, tournamentgenerator-linux-x64.tar.gz, tiebreakchecker-linux-x64.tar.gz, ratingsimulation-linux-x64.tar.gz |" >> $GITHUB_STEP_SUMMARY
+          echo "| Windows ARM64 | pairingchecker-windows-arm64.zip, tournamentgenerator-windows-arm64.zip, tiebreakchecker-windows-arm64.zip, ratingsimulation-windows-arm64.zip |" >> $GITHUB_STEP_SUMMARY
+          echo "| Windows x64 | pairingchecker-windows-x64.zip, tournamentgenerator-windows-x64.zip, tiebreakchecker-windows-x64.zip, ratingsimulation-windows-x64.zip |" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### Download" >> $GITHUB_STEP_SUMMARY
           echo "- [View Release on GitHub](https://github.com/${{ github.repository }}/releases/tag/gacrux-v${{ steps.version.outputs.version }})" >> $GITHUB_STEP_SUMMARY

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Vesus Pairings (Desktop) Checksum Verification Script
-# This script helps verify the integrity of downloaded executables
+# This script helps verify the integrity of downloaded engine archives
 
 set -euo pipefail
 
@@ -30,13 +30,15 @@ log_success() {
 
 # Display usage information
 usage() {
-    echo "Usage: $0 <executable-file> <checksum-file>"
-    echo "  <executable-file>  Path to the downloaded executable"
-    echo "  <checksum-file>    Path to the file containing SHA256 checksums"
+    echo "Usage: $0 <archive-file> <checksum-file>"
+    echo "  <archive-file>   Path to the downloaded engine archive (.tar.gz or .zip)"
+    echo "  <checksum-file>  Path to the file containing SHA256 checksums"
+    echo ""
+    echo "Verify the archive BEFORE extracting it."
     echo ""
     echo "Example:"
-    echo "  $0 pairingchecker-linux-x64 checksums.txt"
-    echo "  $0 pairingchecker-windows-x64.exe checksums-linux-x64.txt"
+    echo "  $0 pairingchecker-linux-x64.tar.gz checksums.txt"
+    echo "  $0 pairingchecker-windows-x64.zip checksums-windows-x64.txt"
     exit 1
 }
 
@@ -46,12 +48,12 @@ if [[ $# -ne 2 ]]; then
     usage
 fi
 
-EXECUTABLE="$1"
+ARCHIVE="$1"
 CHECKSUM_FILE="$2"
 
 # Check if files exist
-if [[ ! -f "$EXECUTABLE" ]]; then
-    log_error "Executable file '$EXECUTABLE' not found"
+if [[ ! -f "$ARCHIVE" ]]; then
+    log_error "Archive file '$ARCHIVE' not found"
     exit 1
 fi
 
@@ -60,18 +62,18 @@ if [[ ! -f "$CHECKSUM_FILE" ]]; then
     exit 1
 fi
 
-# Get the filename of the executable (for matching in checksum file)
-EXECUTABLE_BASENAME=$(basename "$EXECUTABLE")
+# Get the filename of the archive (for matching in checksum file)
+ARCHIVE_BASENAME=$(basename "$ARCHIVE")
 
-log_info "Verifying checksum for: $EXECUTABLE_BASENAME"
+log_info "Verifying checksum for: $ARCHIVE_BASENAME"
 log_info "Using checksum file: $CHECKSUM_FILE"
 
 # Extract the expected checksum for this file
 # Use -w to match whole word (exact filename), avoid partial matches
-EXPECTED_CHECKSUM=$(grep -w "$EXECUTABLE_BASENAME" "$CHECKSUM_FILE" | head -1 | awk '{print $1}')
+EXPECTED_CHECKSUM=$(grep -w "$ARCHIVE_BASENAME" "$CHECKSUM_FILE" | head -1 | awk '{print $1}')
 
 if [[ -z "$EXPECTED_CHECKSUM" ]]; then
-    log_error "No checksum found for '$EXECUTABLE_BASENAME' in '$CHECKSUM_FILE'"
+    log_error "No checksum found for '$ARCHIVE_BASENAME' in '$CHECKSUM_FILE'"
     exit 1
 fi
 
@@ -80,16 +82,16 @@ log_info "Expected checksum: $EXPECTED_CHECKSUM"
 # Calculate the actual checksum based on the OS
 if [[ "$OSTYPE" == "darwin"* ]]; then
     # macOS
-    ACTUAL_CHECKSUM=$(shasum -a 256 "$EXECUTABLE" | awk '{print $1}')
+    ACTUAL_CHECKSUM=$(shasum -a 256 "$ARCHIVE" | awk '{print $1}')
 elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
     # Linux
-    ACTUAL_CHECKSUM=$(sha256sum "$EXECUTABLE" | awk '{print $1}')
+    ACTUAL_CHECKSUM=$(sha256sum "$ARCHIVE" | awk '{print $1}')
 elif [[ "$OSTYPE" == "msys" || "$OSTYPE" == "cygwin" || "$OSTYPE" == "win32" ]]; then
     # Windows (using CertUtil in PowerShell or bash subsystem)
     if command -v shasum &> /dev/null; then
-        ACTUAL_CHECKSUM=$(shasum -a 256 "$EXECUTABLE" | awk '{print $1}')
+        ACTUAL_CHECKSUM=$(shasum -a 256 "$ARCHIVE" | awk '{print $1}')
     elif command -v sha256sum &> /dev/null; then
-        ACTUAL_CHECKSUM=$(sha256sum "$EXECUTABLE" | awk '{print $1}')
+        ACTUAL_CHECKSUM=$(sha256sum "$ARCHIVE" | awk '{print $1}')
     else
         log_error "Neither shasum nor sha256sum is available. Please install one of them."
         exit 1
@@ -105,12 +107,12 @@ log_info "Actual checksum:   $ACTUAL_CHECKSUM"
 if [[ "$EXPECTED_CHECKSUM" == "$ACTUAL_CHECKSUM" ]]; then
     log_success "Checksum verification PASSED"
     echo ""
-    echo "The executable '$EXECUTABLE_BASENAME' is authentic and has not been tampered with."
+    echo "The archive '$ARCHIVE_BASENAME' is authentic and has not been tampered with."
     exit 0
 else
     log_error "Checksum verification FAILED"
     echo ""
-    echo "The executable '$EXECUTABLE_BASENAME' may be corrupted or tampered with."
+    echo "The archive '$ARCHIVE_BASENAME' may be corrupted or tampered with."
     echo "Expected: $EXPECTED_CHECKSUM"
     echo "Got:      $ACTUAL_CHECKSUM"
     exit 1

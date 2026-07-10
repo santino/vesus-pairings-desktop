@@ -99,7 +99,7 @@ Each release includes SHA256 checksums for the executables. To verify the integr
 
 Vesus Pairings integrates the [Gacrux](https://github.com/OttoMilvang/TieBreakServer) engine for **Swiss Dutch** pairings. Gacrux is developed by IA Otto Milvang, a member of the FIDE Technical Commission.
 
-Gacrux also provides a pairing checker, tournament generator, and tiebreak checker (though the tiebreak checker is not used by Vesus Pairings). The binaries are built from the open source Python source code, as compiling them into executables requires specialized engineering knowledge.
+Gacrux also provides a pairing checker, tournament generator, tiebreak checker, and rating simulation (though the tiebreak checker and rating simulation are not used by Vesus Pairings). The binaries are built from the open source Python source code, as compiling them into executables requires specialized engineering knowledge.
 
 They are distributed as separate releases in this repository. You can find them on the [Releases page](https://github.com/santino/vesus-pairings-desktop/releases) by looking for the title **Gacrux Engines** (e.g., *Gacrux Engines v1.x.x*).
 
