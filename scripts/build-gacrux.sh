@@ -57,6 +57,16 @@ get_platform_suffix() {
   echo "${platform_os}-${platform_arch}"
 }
 
+# Returns 0 when running on Windows (Git Bash / MSYS / Cygwin), 1 otherwise.
+# Does not rely on $OSTYPE, which is inconsistent across Git Bash installs.
+is_windows() {
+  case "$(uname -s)" in
+    MINGW*|MSYS*|CYGWIN*|Windows*) return 0 ;;
+  esac
+  [[ "${PLATFORM:-}" == windows-* ]] && return 0
+  return 1
+}
+
 # Cleanup handler to remove temporary files and handle logs
 cleanup() {
   local exit_code="${1:-$?}"
@@ -187,6 +197,8 @@ PYTHON_SCRIPT
 build_binary() {
   local source_file="$1"
   local binary_name="$2"
+  local extra_pip="${3:-}"
+  local extra_hidden="${4:-}"
 
   log_info "Building $binary_name..."
 
@@ -204,24 +216,29 @@ build_binary() {
     exit 1
   fi
 
-  local venv_python
-  if [[ "$OSTYPE" == "msys" ]] || [[ "$OSTYPE" == "win32" ]]; then
-    if [[ -f "$venv_dir/Scripts/python.exe" ]]; then
-      venv_python="$venv_dir/Scripts/python.exe"
-    elif [[ -f "$venv_dir/Scripts/python3.exe" ]]; then
-      venv_python="$venv_dir/Scripts/python3.exe"
-    else
-      log_error "No Python executable found in $venv_dir/Scripts/"
-      exit 1
-    fi
-  else
+  local venv_python=""
+  if [[ -f "$venv_dir/Scripts/python.exe" ]]; then
+    venv_python="$venv_dir/Scripts/python.exe"
+  elif [[ -f "$venv_dir/Scripts/python3.exe" ]]; then
+    venv_python="$venv_dir/Scripts/python3.exe"
+  elif [[ -f "$venv_dir/bin/python" ]]; then
     venv_python="$venv_dir/bin/python"
+  elif [[ -f "$venv_dir/bin/python3" ]]; then
+    venv_python="$venv_dir/bin/python3"
+  else
+    log_error "No Python executable found in $venv_dir (checked Scripts/ and bin/)"
+    exit 1
   fi
 
   log_info "Using venv Python: $venv_python"
 
   log_info "Installing PyInstaller in virtual environment..."
   "$venv_python" -m pip install --quiet pyinstaller networkx
+
+  if [[ -n "$extra_pip" ]]; then
+    log_info "Installing extra dependencies for $binary_name: $extra_pip"
+    "$venv_python" -m pip install --quiet $extra_pip
+  fi
 
   cd "$REPO_DIR"
 
@@ -248,36 +265,86 @@ build_binary() {
 
   local repo_dir_for_python="$REPO_DIR"
   local engine_dir_for_python="$ENGINE_DIR"
-  if [[ "$OSTYPE" == "msys" ]] || [[ "$OSTYPE" == "win32" ]]; then
+  if is_windows; then
     repo_dir_for_python=$(cygpath -m "$REPO_DIR" 2>/dev/null || echo "$REPO_DIR")
     engine_dir_for_python=$(cygpath -m "$ENGINE_DIR" 2>/dev/null || echo "$ENGINE_DIR")
   fi
 
   log_info "Running PyInstaller..."
-  "$venv_python" -m PyInstaller --onefile \
+  local pyi_extra=""
+  if [[ -n "$extra_hidden" ]]; then
+    for hi in $extra_hidden; do
+      pyi_extra="$pyi_extra --hidden-import $hi"
+    done
+  fi
+  # shellcheck disable=SC2086
+  "$venv_python" -m PyInstaller --onedir --noconfirm \
     --name "$binary_name" \
     --distpath "$engine_dir_for_python" \
     --paths "$repo_dir_for_python" \
-    --collect-all . \
     --hidden-import networkx \
+    $pyi_extra \
+    --exclude-module tkinter \
+    --exclude-module tkinter.ttk \
+    --exclude-module idlelib \
+    --exclude-module turtledemo \
+    --exclude-module unittest \
+    --exclude-module test \
+    --exclude-module doctest \
+    --exclude-module pydoc \
+    --exclude-module ensurepip \
+    --exclude-module curses \
+    --exclude-module lib2to3 \
+    --exclude-module multiprocessing \
+    --exclude-module asyncio \
     "$source_file"
 
-  local binary_path="$ENGINE_DIR/$binary_name"
-  if [[ "$OSTYPE" == "msys" || "$OSTYPE" == "win32" || "$OSTYPE" == "cygwin" ]]; then
-      binary_path="${binary_path}.exe"
+  local exe_path="$ENGINE_DIR/$binary_name/$binary_name"
+  if [[ ! -f "$exe_path" && -f "${exe_path}.exe" ]]; then
+    exe_path="${exe_path}.exe"
   fi
 
-  if [[ -f "$binary_path" ]]; then
-    chmod 755 "$binary_path"
+  if [[ -f "$exe_path" ]]; then
+    chmod 755 "$exe_path"
 
     if [[ "$(uname -s)" == "Darwin" ]]; then
       log_info "Ad-hoc signing binary for macOS..."
-      codesign --force --deep -s - "$binary_path" 2>/dev/null || log_warn "Codesign failed - binary may trigger Gatekeeper warning"
+      codesign --force --deep -s - "$exe_path" 2>/dev/null || log_warn "Codesign failed - binary may trigger Gatekeeper warning"
     fi
 
-    log_info "$binary_name built successfully"
+    log_info "Packaging onedir bundle into a platform-native archive..."
+    local platform_suffix
+    platform_suffix=$(get_platform_suffix)
+    GACREXE_NAME="$binary_name" GACREXE_DIR="$ENGINE_DIR" GACREXE_SUFFIX="$platform_suffix" "$venv_python" - <<'PYEOF'
+import os
+name = os.environ["GACREXE_NAME"]
+engine_dir = os.environ["GACREXE_DIR"]
+suffix = os.environ.get("GACREXE_SUFFIX", "")
+is_windows = suffix.startswith("windows")
+src = os.path.join(engine_dir, name)
+arc_base = name + "-" + suffix
+# Archive contents are stored relative to the bundle directory so the
+# executable and _internal/ sit at the archive root (no nested folder).
+if is_windows:
+    import zipfile
+    arc = os.path.join(engine_dir, arc_base + ".zip")
+    with zipfile.ZipFile(arc, "w", zipfile.ZIP_DEFLATED) as zf:
+        for root, _d, files in os.walk(src):
+            for f in files:
+                fp = os.path.join(root, f)
+                zf.write(fp, os.path.relpath(fp, src))
+else:
+    import tarfile
+    arc = os.path.join(engine_dir, arc_base + ".tar.gz")
+    with tarfile.open(arc, "w:gz") as tf:
+        for item in sorted(os.listdir(src)):
+            tf.add(os.path.join(src, item), arcname=item, recursive=True)
+print("Created archive:", arc)
+PYEOF
+
+    log_info "$binary_name built and packaged successfully"
   else
-    log_error "Build failed for $binary_name (expected at $binary_path)"
+    log_error "Build failed for $binary_name (expected executable at $exe_path)"
     exit 1
   fi
 }
@@ -288,9 +355,10 @@ build_all_binaries() {
   local platform_suffix
   platform_suffix=$(get_platform_suffix)
 
-  build_binary "pairingchecker.py" "pairingchecker-$platform_suffix"
-  build_binary "tournamentgenerator.py" "tournamentgenerator-$platform_suffix"
-  build_binary "tiebreakchecker.py" "tiebreakchecker-$platform_suffix"
+  build_binary "pairingchecker.py" "pairingchecker"
+  build_binary "tournamentgenerator.py" "tournamentgenerator"
+  build_binary "tiebreakchecker.py" "tiebreakchecker"
+  build_binary "ratingsimulation.py" "ratingsimulation" "matplotlib numpy scipy" "matplotlib numpy scipy matplotlib.backends.backend_agg"
 
   log_info "All binaries built successfully"
 }

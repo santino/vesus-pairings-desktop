@@ -28,28 +28,36 @@ The build script performs the following steps:
 2. **Detects the version** from `version.py`
 3. **Creates a Python virtual environment**
 4. **Installs PyInstaller and dependencies**
-5. **Builds all three binaries**:
+5. **Builds all four binaries** as PyInstaller *onedir* bundles:
    - `pairingchecker`
    - `tournamentgenerator`
    - `tiebreakchecker`
-6. **Generates SHA256 checksums** for all binaries
-7. **Automatically cleans up** temporary files
+   - `ratingsimulation`
+6. **Packages each bundle** into a platform-native archive (`.zip` on Windows, `.tar.gz` on macOS/Linux), preserving the executable bit
+7. **Generates SHA256 checksums** for the archives
+8. **Automatically cleans up** temporary files
 
 ## Output
 
-After a successful build, the output directory contains:
+After a successful build, the output directory contains the *onedir* bundles and their archives:
 
 ```
 engines/
-├── pairingchecker              # macOS/Linux (no extension)
-├── pairingchecker.exe          # Windows
-├── tournamentgenerator         # macOS/Linux (no extension)
-├── tournamentgenerator.exe     # Windows
-├── tiebreakchecker             # macOS/Linux (no extension)
-├── tiebreakchecker.exe         # Windows
-├── checksums.txt               # SHA256 checksums
-└── version.txt                 # Gacrux version
+├── pairingchecker/                         # onedir bundle (executable + _internal/)
+│   ├── pairingchecker[.exe]
+│   └── _internal/
+├── tournamentgenerator/
+├── tiebreakchecker/
+├── ratingsimulation/
+├── pairingchecker-<platform>.tar.gz        # .zip on Windows
+├── tournamentgenerator-<platform>.tar.gz
+├── tiebreakchecker-<platform>.tar.gz
+├── ratingsimulation-<platform>.tar.gz
+├── checksums-<platform>.txt                # SHA256 checksums (of the archives)
+└── version-<platform>.txt                  # Gacrux version
 ```
+
+`<platform>` is e.g. `linux-x64`, `macos-arm64`, or `windows-x64`. The archives are what get published to GitHub Releases; the built bundle folders are for local testing.
 
 ## Troubleshooting
 
@@ -78,20 +86,21 @@ Check the build log at `engines/build.log` for detailed error messages.
 After building, verify the binaries:
 
 ```bash
-# Check file sizes
-ls -lh engines/*
+# Check bundle and archive sizes
+ls -lh engines/
 
-# Verify checksums
-sha256sum -c engines/checksums.txt
+# Verify checksums — run from inside the output dir, since the file lists bare
+# archive names (substitute your platform suffix: linux-x64, macos-arm64, windows-x64, ...)
+(cd engines && sha256sum -c checksums-linux-x64.txt)   # macOS: shasum -a 256 -c checksums-macos-arm64.txt
 
 # Check version
-cat engines/version.txt
+cat engines/version-linux-x64.txt
 
 # Test binaries (macOS/Linux)
-./engines/pairingchecker --help
+./engines/pairingchecker/pairingchecker --help
 
 # Test binaries (Windows)
-engines\pairingchecker.exe --help
+engines\pairingchecker\pairingchecker.exe --help
 ```
 
 ## Support
