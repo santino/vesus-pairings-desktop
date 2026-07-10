@@ -1,52 +1,62 @@
 # Gacrux Engines
 
-This directory contains documentation and resources for building and distributing the Gacrux engine binaries used by Vesus Pairings.
-
-## Quick Links
-
-- [Building Engines](./building.md) - Guide for building binaries locally
-- [Distribution](./distribution.md) - Guide for automated builds and releases
+This directory documents how to obtain and build the Gacrux engine binaries used by Vesus Pairings.
 
 ## Overview
 
-Vesus Pairings uses Gacrux for certain Swiss tournament operations:
+Vesus Pairings uses [Gacrux](https://github.com/OttoMilvang/TieBreakServer) for certain Swiss tournament operations. Four engines are provided:
 
 - **pairingchecker** - Used by Vesus for generating and validating chess pairings
 - **tournamentgenerator** - Used only for FIDE endorsement procedures
 - **tiebreakchecker** - Not used by Vesus; made available for chess operators who might need it
+- **ratingsimulation** - Not used by Vesus; made available for chess operators who might need it
 
 Vesus calculates its own standings using custom built logic, so the tiebreak checker from Gacrux is not currently integrated into the application.
 
-## Supported Platforms
+## Getting the engines
 
-| Platform | Architecture | Binary Extensions |
-|----------|--------------|-------------------|
-| macOS    | ARM64, x64   | No extension      |
-| Linux    | ARM64, x64   | No extension      |
-| Windows  | ARM64, x64   | `.exe`            |
+Most people will want one of these two options:
 
-## Building
+### Option 1 — Download prebuilt binaries (recommended)
 
-### Local Build
+Every release publishes ready-to-run archives for all supported platforms. This is the fastest path if you just want to use an engine.
+
+1. Download the archive for your platform and engine from [GitHub Releases](https://github.com/santino/vesus-pairings-desktop/releases)
+2. Verify the archive against the release `checksums.txt`
+3. Extract it and run the executable (kept next to its `_internal/` folder)
+
+See **[Distribution](./distribution.md)** for detailed download, verification, and extraction instructions.
+
+### Option 2 — Build locally
+
+Prefer to build from source? The build script clones Gacrux source code, builds all four engines with PyInstaller, and packages them into archives.
 
 ```bash
 ./scripts/build-gacrux.sh --output-dir ./engines
 ```
 
-### Automated Build
+See **[Building Engines](./building.md)** for prerequisites, output layout, and troubleshooting.
 
-Trigger the GitHub Actions workflow to build all platforms automatically.
+## Supported Platforms
 
-## Getting Binaries
+Each engine is a PyInstaller *onedir* bundle (executable + `_internal/` folder), distributed as a platform-native archive:
 
-1. **Download from Releases**: Get the latest binaries from GitHub Releases
-2. **Build Locally**: Build your own binaries using the build script
-3. **Verify Checksums**: Always verify checksums for security
+| Platform | Architecture | Archive format | Executable extension |
+|----------|--------------|----------------|----------------------|
+| macOS    | ARM64, x64   | `.tar.gz`      | No extension         |
+| Linux    | ARM64, x64   | `.tar.gz`      | No extension         |
+| Windows  | ARM64, x64   | `.zip`         | `.exe`               |
+
+On macOS/Linux the executable bit is preserved inside the `.tar.gz`, so no `chmod +x` is needed after extraction.
+
+## For maintainers: automated releases
+
+Repository owners can build and publish all platforms at once via the **[Build Gacrux Engines](../../.github/workflows/build-engines.yml)** GitHub Actions workflow (triggered manually with `workflow_dispatch`, or by pushing to the `engines-update` branch). This is not needed for regular users — the resulting archives are what appear under Releases.
 
 ## Documentation
 
 - [Building Engines](./building.md) - Detailed build instructions
-- [Distribution](./distribution.md) - GitHub Actions workflow guide
+- [Distribution](./distribution.md) - Download, verify, and extract released archives
 - [macOS Installation](../macos/installation.md) - Install on macOS
 - [Linux Installation](../linux/installation.md) - Install on Linux
 - [Windows Installation](../windows/installation.md) - Install on Windows
@@ -54,11 +64,11 @@ Trigger the GitHub Actions workflow to build all platforms automatically.
 ## Resources
 
 - [Gacrux Source](https://github.com/OttoMilvang/TieBreakServer) - Original Gacrux repository
-- [GitHub Actions Workflow](../.github/workflows/build-engines.yml) - Build automation
+- [GitHub Actions Workflow](../../.github/workflows/build-engines.yml) - Build automation
 - [Build Script](../../scripts/build-gacrux.sh) - Local build script
 
 ## Versioning
 
-Binaries are versioned using the format `engines-vX.Y.Z` (e.g., `engines-v1.0.0`).
+Releases are tagged `gacrux-vX.Y.Z` (e.g., `gacrux-v1.8.48`), matching the upstream Gacrux version the binaries were built from.
 
-Always download the latest version for the best performance, security, and adherence to the latest chess tournaments rules.
+Always use the latest version for the best performance, security, and adherence to the latest chess tournament rules.
