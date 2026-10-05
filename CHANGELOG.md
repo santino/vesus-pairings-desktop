@@ -1,3 +1,14 @@
+## 0.5.0 (2026-07-13)
+
+### 🚀 Features
+
+- Add option to delete all absent players from Participants menu
+- Introduce final standing to Event Broadcast page
+- Redesign Event Broadcast results page to fit more player information
+- Implement age categories to simplify setup of birth ranges in grouped standings
+- Minimise TRF generation when used for pairing purposes (pairing engine)
+- Improve Gacrux build for faster startup
+
 ## 0.4.0 (2026-07-07)
 
 ### 🚀 Features
