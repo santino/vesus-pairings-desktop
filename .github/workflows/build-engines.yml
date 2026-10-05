@@ -158,9 +158,6 @@ jobs:
         uses: actions/download-artifact@v8
         with:
           path: ./artifacts
-          # The engine archives are published as release assets, so they must be
-          # kept byte-for-byte rather than being decompressed by the action.
-          skip-decompress: true
 
       - name: Verify version consistency across platforms
         id: version
