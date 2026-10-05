@@ -1,3 +1,24 @@
+## 0.5.1 (2026-10-05)
+
+### 🚀 Features
+
+- Add Support Vesus button to main menu linking to the dedicated donation page on vesus.org
+- Simplify broadcast enable/disable flow. Stricter access to broadcast page. Additional broadcast refinements and improvements
+- Converge broadcast approach across Cloud and Desktop editions
+
+### 🩹 Fixes
+
+- Fix form errors rendering
+- Improve rating list reliability on Windows
+- Fix email validation to support modern TLDs like .email
+- Update Italian Chess Federation reports for National Youth Championship
+- Fix stale persisted download update information even when newest version is available
+- Don't preset organiser and email in new event form
+- Increase security for broadcast access and usage when enabled/disabled
+- Correct date-time field value handling on timezone change and manual input
+- Fix broadcast page styling to ensure elements do not exceed page width
+- Fix white/black pairings indicators to fight Samsung browser color inversion in dark mode
+
 ## 0.5.0 (2026-07-13)
 
 ### 🚀 Features
