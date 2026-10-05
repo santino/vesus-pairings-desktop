@@ -14,6 +14,12 @@ set -euo pipefail
 readonly REPO_URL="https://github.com/OttoMilvang/TieBreakServer.git"
 readonly REPO_BRANCH="${REPO_BRANCH:-main}"
 
+# Stdlib modules trimmed from the bundle to keep it small.
+# NOTE: matplotlib/scipy pull in pyparsing, which imports unittest/doctest at
+# runtime, so the ratingsimulation build must use the reduced set below.
+readonly DEFAULT_EXCLUDES="tkinter tkinter.ttk idlelib turtledemo unittest test doctest pydoc ensurepip curses lib2to3 multiprocessing asyncio"
+readonly PLOTTING_EXCLUDES="tkinter tkinter.ttk idlelib turtledemo lib2to3 multiprocessing asyncio"
+
 # Global variables set by main
 ENGINE_DIR=""
 TEMP_DIR=""
@@ -32,6 +38,20 @@ log() {
 log_info() { log "INFO" "$@"; }
 log_warn() { log "WARN" "$@"; }
 log_error() { log "ERROR" "$@"; }
+
+# Returns 0 when running on Windows (Git Bash / MSYS / Cygwin), 1 otherwise.
+# Uses uname -s for reliability across Git Bash variants and falls back to
+# the PLATFORM env var set by the CI workflow.
+is_windows() {
+  case "$(uname -s)" in
+    MINGW*|MSYS*|CYGWIN*|Windows*) return 0 ;;
+  esac
+  case "${OSTYPE:-}" in
+    msys*|mingw*|cygwin*|win32*) return 0 ;;
+  esac
+  [[ "${PLATFORM:-}" == windows-* ]] && return 0
+  return 1
+}
 
 # Returns the platform suffix (e.g., linux-x64, windows-arm64)
 get_platform_suffix() {
@@ -55,16 +75,6 @@ get_platform_suffix() {
   esac
 
   echo "${platform_os}-${platform_arch}"
-}
-
-# Returns 0 when running on Windows (Git Bash / MSYS / Cygwin), 1 otherwise.
-# Does not rely on $OSTYPE, which is inconsistent across Git Bash installs.
-is_windows() {
-  case "$(uname -s)" in
-    MINGW*|MSYS*|CYGWIN*|Windows*) return 0 ;;
-  esac
-  [[ "${PLATFORM:-}" == windows-* ]] && return 0
-  return 1
 }
 
 # Cleanup handler to remove temporary files and handle logs
@@ -145,13 +155,21 @@ sync_repository() {
 }
 
 detect_version() {
-  local version_file="$REPO_DIR/version.py"
   local platform_suffix
   platform_suffix=$(get_platform_suffix)
 
-  if [[ -f "$version_file" ]]; then
-    log_info "Detecting version from $version_file..."
+  # The version module lives inside the package since the gacrux/ refactor.
+  local version_module=""
+  if [[ -f "$REPO_DIR/gacrux/version.py" ]]; then
+    version_module="gacrux.version"
+  elif [[ -f "$REPO_DIR/version.py" ]]; then
+    version_module="version"
+  fi
+
+  if [[ -n "$version_module" ]]; then
+    log_info "Detecting version from $version_module..."
     export PYI_REPO_DIR="$REPO_DIR"
+    export PYI_VERSION_MODULE="$version_module"
 
     local python_cmd="python3"
     if ! command -v python3 &> /dev/null; then
@@ -163,35 +181,44 @@ detect_version() {
 import sys
 import os
 repo_dir = os.environ.get('PYI_REPO_DIR', '')
-if repo_dir:
+module = os.environ.get('PYI_VERSION_MODULE', '')
+if repo_dir and module:
     sys.path.insert(0, repo_dir)
     try:
-        from version import version
-        print(version()['version'])
+        mod = __import__(module, fromlist=['version'])
+        if callable(getattr(mod, 'version', None)):
+            print(mod.version()['version'])
+        else:
+            print(mod.__version__)
     except Exception:
         pass
 PYTHON_SCRIPT
-) || version="unknown"
+    )
 
-    if [[ -n "$version" && "$version" != "unknown" ]]; then
+    if [[ -n "$version" ]]; then
       echo "$version" > "$ENGINE_DIR/version-$platform_suffix.txt"
       log_info "Detected Gacrux version: $version"
       return 0
     fi
+
+    log_warn "Could not import $version_module for version detection."
   fi
 
   if [[ -d "$REPO_DIR/.git" ]]; then
+    # The clone is shallow, so tags are only present if fetched explicitly.
+    (cd "$REPO_DIR" && git fetch --tags --depth 1 origin >/dev/null 2>&1) || true
     local git_version
-    git_version=$(cd "$REPO_DIR" && git describe --tags --abbrev=0 2>/dev/null || echo "unknown")
-    if [[ -n "$git_version" && "$git_version" != "unknown" ]]; then
+    git_version=$(cd "$REPO_DIR" && git describe --tags --abbrev=0 2>/dev/null || echo "")
+    if [[ -n "$git_version" ]]; then
       echo "$git_version" > "$ENGINE_DIR/version-$platform_suffix.txt"
       log_info "Detected Gacrux version from git: $git_version"
       return 0
     fi
   fi
 
-  log_warn "Could not detect version, using 'unknown'"
-  echo "unknown" > "$ENGINE_DIR/version-$platform_suffix.txt"
+  # Publishing an unversioned release is worse than failing the build.
+  log_error "Could not determine Gacrux version (no version module and no git tags)."
+  exit 1
 }
 
 build_binary() {
@@ -199,6 +226,7 @@ build_binary() {
   local binary_name="$2"
   local extra_pip="${3:-}"
   local extra_hidden="${4:-}"
+  local excludes="${5:-$DEFAULT_EXCLUDES}"
 
   log_info "Building $binary_name..."
 
@@ -216,18 +244,18 @@ build_binary() {
     exit 1
   fi
 
-  local venv_python=""
-  if [[ -f "$venv_dir/Scripts/python.exe" ]]; then
-    venv_python="$venv_dir/Scripts/python.exe"
-  elif [[ -f "$venv_dir/Scripts/python3.exe" ]]; then
-    venv_python="$venv_dir/Scripts/python3.exe"
-  elif [[ -f "$venv_dir/bin/python" ]]; then
-    venv_python="$venv_dir/bin/python"
-  elif [[ -f "$venv_dir/bin/python3" ]]; then
-    venv_python="$venv_dir/bin/python3"
+  local venv_python
+  if is_windows; then
+    if [[ -f "$venv_dir/Scripts/python.exe" ]]; then
+      venv_python="$venv_dir/Scripts/python.exe"
+    elif [[ -f "$venv_dir/Scripts/python3.exe" ]]; then
+      venv_python="$venv_dir/Scripts/python3.exe"
+    else
+      log_error "No Python executable found in $venv_dir/Scripts/"
+      exit 1
+    fi
   else
-    log_error "No Python executable found in $venv_dir (checked Scripts/ and bin/)"
-    exit 1
+    venv_python="$venv_dir/bin/python"
   fi
 
   log_info "Using venv Python: $venv_python"
@@ -263,11 +291,17 @@ build_binary() {
     fi
   fi
 
+  # The engines live in the gacrux/ package but import their siblings flat when
+  # executed as a script, so both the repo root and the package dir are needed.
   local repo_dir_for_python="$REPO_DIR"
+  local gacrux_dir_for_python="$REPO_DIR/gacrux"
   local engine_dir_for_python="$ENGINE_DIR"
+  local source_file_for_python="$source_file"
   if is_windows; then
     repo_dir_for_python=$(cygpath -m "$REPO_DIR" 2>/dev/null || echo "$REPO_DIR")
+    gacrux_dir_for_python=$(cygpath -m "$REPO_DIR/gacrux" 2>/dev/null || echo "$REPO_DIR/gacrux")
     engine_dir_for_python=$(cygpath -m "$ENGINE_DIR" 2>/dev/null || echo "$ENGINE_DIR")
+    source_file_for_python=$(cygpath -m "$REPO_DIR/$source_file" 2>/dev/null || echo "$REPO_DIR/$source_file")
   fi
 
   log_info "Running PyInstaller..."
@@ -277,30 +311,23 @@ build_binary() {
       pyi_extra="$pyi_extra --hidden-import $hi"
     done
   fi
+  local pyi_exclude=""
+  for ex in $excludes; do
+    pyi_exclude="$pyi_exclude --exclude-module $ex"
+  done
   # shellcheck disable=SC2086
   "$venv_python" -m PyInstaller --onedir --noconfirm \
     --name "$binary_name" \
     --distpath "$engine_dir_for_python" \
     --paths "$repo_dir_for_python" \
+    --paths "$gacrux_dir_for_python" \
     --hidden-import networkx \
     $pyi_extra \
-    --exclude-module tkinter \
-    --exclude-module tkinter.ttk \
-    --exclude-module idlelib \
-    --exclude-module turtledemo \
-    --exclude-module unittest \
-    --exclude-module test \
-    --exclude-module doctest \
-    --exclude-module pydoc \
-    --exclude-module ensurepip \
-    --exclude-module curses \
-    --exclude-module lib2to3 \
-    --exclude-module multiprocessing \
-    --exclude-module asyncio \
-    "$source_file"
+    $pyi_exclude \
+    "$source_file_for_python"
 
   local exe_path="$ENGINE_DIR/$binary_name/$binary_name"
-  if [[ ! -f "$exe_path" && -f "${exe_path}.exe" ]]; then
+  if is_windows; then
     exe_path="${exe_path}.exe"
   fi
 
@@ -315,6 +342,8 @@ build_binary() {
     log_info "Packaging onedir bundle into a platform-native archive..."
     local platform_suffix
     platform_suffix=$(get_platform_suffix)
+    # Archive contents are stored relative to the bundle directory so the
+    # executable and _internal/ sit at the archive root (no nested folder).
     GACREXE_NAME="$binary_name" GACREXE_DIR="$ENGINE_DIR" GACREXE_SUFFIX="$platform_suffix" "$venv_python" - <<'PYEOF'
 import os
 name = os.environ["GACREXE_NAME"]
@@ -323,8 +352,6 @@ suffix = os.environ.get("GACREXE_SUFFIX", "")
 is_windows = suffix.startswith("windows")
 src = os.path.join(engine_dir, name)
 arc_base = name + "-" + suffix
-# Archive contents are stored relative to the bundle directory so the
-# executable and _internal/ sit at the archive root (no nested folder).
 if is_windows:
     import zipfile
     arc = os.path.join(engine_dir, arc_base + ".zip")
@@ -343,6 +370,19 @@ print("Created archive:", arc)
 PYEOF
 
     log_info "$binary_name built and packaged successfully"
+
+    # The archive is a faithful copy of the onedir staging directory, so drop
+    # the staging copy to avoid uploading every engine twice as an artifact.
+    local archive_name="$binary_name-$platform_suffix"
+    if [[ "$platform_suffix" == windows* ]]; then
+      archive_name="${archive_name}.zip"
+    else
+      archive_name="${archive_name}.tar.gz"
+    fi
+    if [[ -f "$ENGINE_DIR/$archive_name" ]]; then
+      rm -rf "$ENGINE_DIR/$binary_name"
+      log_info "Removed staging directory: $binary_name"
+    fi
   else
     log_error "Build failed for $binary_name (expected executable at $exe_path)"
     exit 1
@@ -355,10 +395,12 @@ build_all_binaries() {
   local platform_suffix
   platform_suffix=$(get_platform_suffix)
 
-  build_binary "pairingchecker.py" "pairingchecker"
-  build_binary "tournamentgenerator.py" "tournamentgenerator"
-  build_binary "tiebreakchecker.py" "tiebreakchecker"
-  build_binary "ratingsimulation.py" "ratingsimulation" "matplotlib numpy scipy" "matplotlib numpy scipy matplotlib.backends.backend_agg"
+  build_binary "gacrux/pairingchecker.py" "pairingchecker"
+  build_binary "gacrux/tournamentgenerator.py" "tournamentgenerator"
+  build_binary "gacrux/tiebreakchecker.py" "tiebreakchecker"
+  # secrets: imported by numpy>=2 inside its compiled bit_generator extension,
+  # so PyInstaller's static analysis cannot see it.
+  build_binary "gacrux/ratingsimulation.py" "ratingsimulation" "matplotlib numpy scipy" "matplotlib numpy scipy matplotlib.backends.backend_agg secrets" "$PLOTTING_EXCLUDES"
 
   log_info "All binaries built successfully"
 }

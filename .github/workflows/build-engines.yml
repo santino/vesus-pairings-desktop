@@ -97,34 +97,32 @@ jobs:
 
       - name: Checkout repository
         if: steps.check-platform.outputs.should_build == 'true'
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
 
       - name: Setup Python (macOS/Windows)
         if: steps.check-platform.outputs.should_build == 'true' && !startsWith(matrix.platform, 'linux')
         uses: actions/setup-python@v6
         with:
-          python-version: '3.14'
+          python-version: '3.12'
           architecture: ${{ matrix.arch }}
 
       - name: Build in container (Linux)
         if: steps.check-platform.outputs.should_build == 'true' && startsWith(matrix.platform, 'linux')
-        shell: bash
-        run: |
-          set -euo pipefail
+        uses: addnab/docker-run-action@v3
+        with:
+          image: python:3.12-bullseye
+          options: -v ${{ github.workspace }}:/github/workspace
+          shell: bash
+          run: |
+            set -euo pipefail
 
-          docker run --rm \
-            -v "${{ github.workspace }}:/github/workspace" \
-            -w /github/workspace \
-            python:3.12-bullseye \
-            bash -c '
-              set -euo pipefail
+            for tool in git strip tar gzip; do
+              command -v "$tool" >/dev/null || { echo "missing required tool: $tool"; exit 1; }
+            done
 
-              apt-get update -qq
-              apt-get install -y -qq git binutils
-
-              chmod +x scripts/build-gacrux.sh
-              ./scripts/build-gacrux.sh --output-dir ./engines
-            '
+            cd /github/workspace
+            chmod +x scripts/build-gacrux.sh
+            ./scripts/build-gacrux.sh --output-dir ./engines
 
       - name: Build Gacrux binaries (macOS/Windows)
         if: steps.check-platform.outputs.should_build == 'true' && !startsWith(matrix.platform, 'linux')
@@ -137,14 +135,11 @@ jobs:
 
       - name: Upload binary artifacts
         if: steps.check-platform.outputs.should_build == 'true'
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ matrix.platform }}-engines
           path: |
-            ./engines/*.tar.gz
-            ./engines/*.zip
-            ./engines/checksums-*.txt
-            ./engines/version-*.txt
+            ./engines/*
           retention-days: 30
 
   release:
@@ -157,12 +152,15 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
 
       - name: Download all artifacts
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           path: ./artifacts
+          # The engine archives are published as release assets, so they must be
+          # kept byte-for-byte rather than being decompressed by the action.
+          skip-decompress: true
 
       - name: Verify version consistency across platforms
         id: version
@@ -213,7 +211,7 @@ jobs:
           cat checksums.txt
 
       - name: Create Release
-        uses: softprops/action-gh-release@v3.0.1
+        uses: softprops/action-gh-release@v3.0.3
         with:
           tag_name: gacrux-v${{ steps.version.outputs.version }}
           name: Gacrux Engines v${{ steps.version.outputs.version }}
@@ -256,8 +254,10 @@ jobs:
           files: |
             version.txt
             checksums.txt
-            artifacts/**/*.tar.gz
-            artifacts/**/*.zip
+            artifacts/**/pairingchecker-*
+            artifacts/**/tournamentgenerator-*
+            artifacts/**/tiebreakchecker-*
+            artifacts/**/ratingsimulation-*
           fail_on_unmatched_files: false
 
       - name: Generate release summary
@@ -268,9 +268,7 @@ jobs:
           echo "### Version" >> $GITHUB_STEP_SUMMARY
           echo "- \`${{ steps.version.outputs.version }}\`" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### Binaries" >> $GITHUB_STEP_SUMMARY
-          echo "Each engine ships as a platform-native archive (\`.tar.gz\` on macOS/Linux, \`.zip\` on Windows) containing the executable and its \`_internal\` folder." >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Archives" >> $GITHUB_STEP_SUMMARY
           echo "| Platform | Archives |" >> $GITHUB_STEP_SUMMARY
           echo "|----------|----------|" >> $GITHUB_STEP_SUMMARY
           echo "| macOS ARM64 | pairingchecker-macos-arm64.tar.gz, tournamentgenerator-macos-arm64.tar.gz, tiebreakchecker-macos-arm64.tar.gz, ratingsimulation-macos-arm64.tar.gz |" >> $GITHUB_STEP_SUMMARY
