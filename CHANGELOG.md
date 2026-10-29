@@ -1,3 +1,24 @@
+## 0.6.0 (2026-10-30)
+
+### 🚀 Features
+
+- Redesigned the events list and grouped events by day
+
+### 🩹 Fixes
+
+- Improved preservation of tournament data when switching events,
+  restoring backups, and synchronising between Desktop and Cloud.
+- Fixed backup restoration to recover tournament round counters
+  and settings correctly.
+- Fixed prohibited pairing settings becoming corrupted when
+  synchronising tournaments from Desktop to Cloud.
+- Fixed the publish dialog appearing when saving local changes
+  instead of only when synchronising with Cloud.
+- Fixed broadcast status notifications when switching events.
+- Improved the broadcast settings layout.
+- Corrected player counts shown in summary before pairing.
+- Removed a duplicate close button from the backup dialog.
+
 ## 0.5.1 (2026-10-05)
 
 ### 🚀 Features
