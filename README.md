@@ -54,7 +54,7 @@ Distributed here, the desktop edition is optimized for environments where contro
 
 ### Minimum Requirements
 
-- **Operating System**: Windows 10, Linux (any recent distribution), or macOS 10.15+
+- **Operating System**: Windows 10+, Linux (any recent distribution), or macOS 13 (Ventura) or later
 - **Processor**: 64-bit processor (x86_64 or ARM)
 - **RAM**: ~400 MB (additional memory may be needed depending on system resources and workload)
 - **Disk Space**: 160 MB minimum, plus additional space for user data (events and rating lists)

@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-- macOS 10.15 (Catalina) or later
+- macOS 13 (Ventura) or later
 - **CPU Requirements**:
   - `x86_64` builds require Intel x86_64 processors
   - `arm64` builds require Apple Silicon (all models)
