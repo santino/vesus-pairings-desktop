@@ -1,3 +1,21 @@
+## 0.7.0 (2026-11-11)
+
+### 🚀 Features
+
+- Add read-aloud announcements for pairings and standings, with playback controls in the Pairings and Prints tabs
+- Add FIDE rating variation and player history reports
+
+### 🩹 Fixes
+
+- display accented player names correctly in rating updates, sync dialogs, and exported reports
+- update Baku acceleration links to current FIDE rules
+- populate empty player titles when updating players' data from rating lists
+- prevent sync failures from empty schedule dates
+- allow Chess960 position edits for any incomplete round (even if not sequential)
+- remove date groups in the Desktop event list
+- improve Desktop startup and protect saved event data
+- restore participant counts on Desktop event and tournament cards
+
 ## 0.6.0 (2026-10-30)
 
 ### 🚀 Features
