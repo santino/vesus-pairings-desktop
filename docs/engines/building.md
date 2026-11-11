@@ -32,32 +32,26 @@ The build script performs the following steps:
    - `pairingchecker`
    - `tournamentgenerator`
    - `tiebreakchecker`
-   - `ratingsimulation`
+   - `gacruxconvert`
 6. **Packages each bundle** into a platform-native archive (`.zip` on Windows, `.tar.gz` on macOS/Linux), preserving the executable bit
 7. **Generates SHA256 checksums** for the archives
 8. **Automatically cleans up** temporary files
 
 ## Output
 
-After a successful build, the output directory contains the *onedir* bundles and their archives:
+After a successful build, the output directory contains the archives, checksums, and version information:
 
 ```
 engines/
-├── pairingchecker/                         # onedir bundle (executable + _internal/)
-│   ├── pairingchecker[.exe]
-│   └── _internal/
-├── tournamentgenerator/
-├── tiebreakchecker/
-├── ratingsimulation/
 ├── pairingchecker-<platform>.tar.gz        # .zip on Windows
 ├── tournamentgenerator-<platform>.tar.gz
 ├── tiebreakchecker-<platform>.tar.gz
-├── ratingsimulation-<platform>.tar.gz
+├── gacruxconvert-<platform>.tar.gz
 ├── checksums-<platform>.txt                # SHA256 checksums (of the archives)
 └── version-<platform>.txt                  # Gacrux version
 ```
 
-`<platform>` is e.g. `linux-x64`, `macos-arm64`, or `windows-x64`. The archives are what get published to GitHub Releases; the built bundle folders are for local testing.
+`<platform>` is e.g. `linux-x64`, `macos-arm64`, or `windows-x64`. The archives are what get published to GitHub Releases; the temporary bundle folders are removed after packaging.
 
 ## Troubleshooting
 
@@ -96,11 +90,14 @@ ls -lh engines/
 # Check version
 cat engines/version-linux-x64.txt
 
-# Test binaries (macOS/Linux)
-./engines/pairingchecker/pairingchecker --help
+# Extract and test gacruxconvert (macOS/Linux; substitute your platform)
+mkdir -p engines/gacruxconvert
+tar -xzf engines/gacruxconvert-linux-x64.tar.gz -C engines/gacruxconvert
+./engines/gacruxconvert/gacruxconvert --help
 
-# Test binaries (Windows)
-engines\pairingchecker\pairingchecker.exe --help
+# Extract and test gacruxconvert (Windows PowerShell)
+Expand-Archive engines\gacruxconvert-windows-x64.zip -DestinationPath engines\gacruxconvert
+engines\gacruxconvert\gacruxconvert.exe --help
 ```
 
 ## Support

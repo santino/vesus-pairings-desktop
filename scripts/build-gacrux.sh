@@ -15,10 +15,7 @@ readonly REPO_URL="https://github.com/OttoMilvang/TieBreakServer.git"
 readonly REPO_BRANCH="${REPO_BRANCH:-main}"
 
 # Stdlib modules trimmed from the bundle to keep it small.
-# NOTE: matplotlib/scipy pull in pyparsing, which imports unittest/doctest at
-# runtime, so the ratingsimulation build must use the reduced set below.
 readonly DEFAULT_EXCLUDES="tkinter tkinter.ttk idlelib turtledemo unittest test doctest pydoc ensurepip curses lib2to3 multiprocessing asyncio"
-readonly PLOTTING_EXCLUDES="tkinter tkinter.ttk idlelib turtledemo lib2to3 multiprocessing asyncio"
 
 # Global variables set by main
 ENGINE_DIR=""
@@ -224,9 +221,6 @@ PYTHON_SCRIPT
 build_binary() {
   local source_file="$1"
   local binary_name="$2"
-  local extra_pip="${3:-}"
-  local extra_hidden="${4:-}"
-  local excludes="${5:-$DEFAULT_EXCLUDES}"
 
   log_info "Building $binary_name..."
 
@@ -262,11 +256,6 @@ build_binary() {
 
   log_info "Installing PyInstaller in virtual environment..."
   "$venv_python" -m pip install --quiet pyinstaller networkx
-
-  if [[ -n "$extra_pip" ]]; then
-    log_info "Installing extra dependencies for $binary_name: $extra_pip"
-    "$venv_python" -m pip install --quiet $extra_pip
-  fi
 
   cd "$REPO_DIR"
 
@@ -305,14 +294,8 @@ build_binary() {
   fi
 
   log_info "Running PyInstaller..."
-  local pyi_extra=""
-  if [[ -n "$extra_hidden" ]]; then
-    for hi in $extra_hidden; do
-      pyi_extra="$pyi_extra --hidden-import $hi"
-    done
-  fi
   local pyi_exclude=""
-  for ex in $excludes; do
+  for ex in $DEFAULT_EXCLUDES; do
     pyi_exclude="$pyi_exclude --exclude-module $ex"
   done
   # shellcheck disable=SC2086
@@ -322,7 +305,6 @@ build_binary() {
     --paths "$repo_dir_for_python" \
     --paths "$gacrux_dir_for_python" \
     --hidden-import networkx \
-    $pyi_extra \
     $pyi_exclude \
     "$source_file_for_python"
 
@@ -398,9 +380,7 @@ build_all_binaries() {
   build_binary "gacrux/pairingchecker.py" "pairingchecker"
   build_binary "gacrux/tournamentgenerator.py" "tournamentgenerator"
   build_binary "gacrux/tiebreakchecker.py" "tiebreakchecker"
-  # secrets: imported by numpy>=2 inside its compiled bit_generator extension,
-  # so PyInstaller's static analysis cannot see it.
-  build_binary "gacrux/ratingsimulation.py" "ratingsimulation" "matplotlib numpy scipy" "matplotlib numpy scipy matplotlib.backends.backend_agg secrets" "$PLOTTING_EXCLUDES"
+  build_binary "gacrux/convert.py" "gacruxconvert"
 
   log_info "All binaries built successfully"
 }

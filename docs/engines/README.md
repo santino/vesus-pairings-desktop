@@ -9,7 +9,7 @@ Vesus Pairings uses [Gacrux](https://github.com/OttoMilvang/TieBreakServer) for 
 - **pairingchecker** - Used by Vesus for generating and validating chess pairings
 - **tournamentgenerator** - Used only for FIDE endorsement procedures
 - **tiebreakchecker** - Not used by Vesus; made available for chess operators who might need it
-- **ratingsimulation** - Not used by Vesus; made available for chess operators who might need it
+- **gacruxconvert** - Converts between tournament file formats using upstream `convert.py` (available for chess operators)
 
 Vesus calculates its own standings using custom built logic, so the tiebreak checker from Gacrux is not currently integrated into the application.
 

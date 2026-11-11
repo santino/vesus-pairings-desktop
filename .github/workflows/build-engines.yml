@@ -229,7 +229,7 @@ jobs:
             - **pairingchecker** - Pairing checker engine
             - **tournamentgenerator** - Tournament generator engine
             - **tiebreakchecker** - Tiebreak checker engine
-            - **ratingsimulation** - Rating simulation engine
+            - **gacruxconvert** - Converts between tournament file formats
 
             Available for: Linux (x64, arm64), macOS (x64, arm64), Windows (x64, arm64)
             
@@ -254,7 +254,7 @@ jobs:
             artifacts/**/pairingchecker-*
             artifacts/**/tournamentgenerator-*
             artifacts/**/tiebreakchecker-*
-            artifacts/**/ratingsimulation-*
+            artifacts/**/gacruxconvert-*
           fail_on_unmatched_files: false
 
       - name: Generate release summary
@@ -268,12 +268,12 @@ jobs:
           echo "### Archives" >> $GITHUB_STEP_SUMMARY
           echo "| Platform | Archives |" >> $GITHUB_STEP_SUMMARY
           echo "|----------|----------|" >> $GITHUB_STEP_SUMMARY
-          echo "| macOS ARM64 | pairingchecker-macos-arm64.tar.gz, tournamentgenerator-macos-arm64.tar.gz, tiebreakchecker-macos-arm64.tar.gz, ratingsimulation-macos-arm64.tar.gz |" >> $GITHUB_STEP_SUMMARY
-          echo "| macOS x64 | pairingchecker-macos-x64.tar.gz, tournamentgenerator-macos-x64.tar.gz, tiebreakchecker-macos-x64.tar.gz, ratingsimulation-macos-x64.tar.gz |" >> $GITHUB_STEP_SUMMARY
-          echo "| Linux ARM64 | pairingchecker-linux-arm64.tar.gz, tournamentgenerator-linux-arm64.tar.gz, tiebreakchecker-linux-arm64.tar.gz, ratingsimulation-linux-arm64.tar.gz |" >> $GITHUB_STEP_SUMMARY
-          echo "| Linux x64 | pairingchecker-linux-x64.tar.gz, tournamentgenerator-linux-x64.tar.gz, tiebreakchecker-linux-x64.tar.gz, ratingsimulation-linux-x64.tar.gz |" >> $GITHUB_STEP_SUMMARY
-          echo "| Windows ARM64 | pairingchecker-windows-arm64.zip, tournamentgenerator-windows-arm64.zip, tiebreakchecker-windows-arm64.zip, ratingsimulation-windows-arm64.zip |" >> $GITHUB_STEP_SUMMARY
-          echo "| Windows x64 | pairingchecker-windows-x64.zip, tournamentgenerator-windows-x64.zip, tiebreakchecker-windows-x64.zip, ratingsimulation-windows-x64.zip |" >> $GITHUB_STEP_SUMMARY
+          echo "| macOS ARM64 | pairingchecker-macos-arm64.tar.gz, tournamentgenerator-macos-arm64.tar.gz, tiebreakchecker-macos-arm64.tar.gz, gacruxconvert-macos-arm64.tar.gz |" >> $GITHUB_STEP_SUMMARY
+          echo "| macOS x64 | pairingchecker-macos-x64.tar.gz, tournamentgenerator-macos-x64.tar.gz, tiebreakchecker-macos-x64.tar.gz, gacruxconvert-macos-x64.tar.gz |" >> $GITHUB_STEP_SUMMARY
+          echo "| Linux ARM64 | pairingchecker-linux-arm64.tar.gz, tournamentgenerator-linux-arm64.tar.gz, tiebreakchecker-linux-arm64.tar.gz, gacruxconvert-linux-arm64.tar.gz |" >> $GITHUB_STEP_SUMMARY
+          echo "| Linux x64 | pairingchecker-linux-x64.tar.gz, tournamentgenerator-linux-x64.tar.gz, tiebreakchecker-linux-x64.tar.gz, gacruxconvert-linux-x64.tar.gz |" >> $GITHUB_STEP_SUMMARY
+          echo "| Windows ARM64 | pairingchecker-windows-arm64.zip, tournamentgenerator-windows-arm64.zip, tiebreakchecker-windows-arm64.zip, gacruxconvert-windows-arm64.zip |" >> $GITHUB_STEP_SUMMARY
+          echo "| Windows x64 | pairingchecker-windows-x64.zip, tournamentgenerator-windows-x64.zip, tiebreakchecker-windows-x64.zip, gacruxconvert-windows-x64.zip |" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### Download" >> $GITHUB_STEP_SUMMARY
           echo "- [View Release on GitHub](https://github.com/${{ github.repository }}/releases/tag/gacrux-v${{ steps.version.outputs.version }})" >> $GITHUB_STEP_SUMMARY

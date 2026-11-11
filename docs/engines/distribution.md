@@ -13,7 +13,7 @@ On macOS/Linux the executable bit is set before packaging and preserved inside t
 
 Each release contains archives for all supported platforms:
 
-| Platform      | pairingchecker | tournamentgenerator | tiebreakchecker | ratingsimulation |
+| Platform      | pairingchecker | tournamentgenerator | tiebreakchecker | gacruxconvert |
 |---------------|----------------|---------------------|-----------------|------------------|
 | macOS ARM64   | ✓              | ✓                   | ✓               | ✓                |
 | macOS x64     | ✓              | ✓                   | ✓               | ✓                |
@@ -27,7 +27,7 @@ Each release contains archives for all supported platforms:
 - **pairingchecker** - Generates and validates chess pairings (used by Vesus Pairings)
 - **tournamentgenerator** - Generates random tournaments (used for FIDE endorsement)
 - **tiebreakchecker** - Calculates tiebreaks and standings (available for chess operators)
-- **ratingsimulation** - Simulates tournaments to study chess rating system behaviour (available for chess operators)
+- **gacruxconvert** - Converts between tournament file formats using upstream `convert.py` (available for chess operators)
 
 ## Downloading Binaries
 
@@ -130,7 +130,7 @@ gacrux-v1.8.48/
 ├── pairingchecker-windows-x64.zip
 ├── tournamentgenerator-<platform>.<ext>   # all platforms
 ├── tiebreakchecker-<platform>.<ext>       # all platforms
-├── ratingsimulation-<platform>.<ext>      # all platforms
+├── gacruxconvert-<platform>.<ext>      # all platforms
 ├── checksums.txt                          # SHA256 checksums (of the archives)
 └── version.txt                            # Gacrux version
 ```
