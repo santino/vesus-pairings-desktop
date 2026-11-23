@@ -1,3 +1,21 @@
+## 0.8.0 (2026-11-23)
+
+### 🚀 Features
+
+- add 55+ and 60+ age bands for standings and fees, plus 70+ for standings
+- add read-only tournament TV display
+
+### 🩹 Fixes
+
+- skip invalid tournaments during workspace initialisation
+- fix tournament HTML website ZIP archive downloads on Windows
+- start ChessResults board numbering at 1 in each round
+- strip non-numeric characters from ChessResults player IDs during publish
+- restore round cleanup scopes and valid TRF import defaults
+- restore multilingual text in PDF exports on Cloud and Desktop
+- enforce consistent event validation and recoverable saves
+- clear stale update status on first launch after installation
+
 ## 0.7.0 (2026-11-11)
 
 ### 🚀 Features
